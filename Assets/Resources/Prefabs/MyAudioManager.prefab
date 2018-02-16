@@ -111,6 +111,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53c0ec8da89f8429da53e0ad62d100cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityPrefab: {fileID: 114982285993479594, guid: 4fa1cc77f7c6d424ebf01a5656272835,
+    type: 2}
+  PoolSize: 32
 --- !u!114 &114301025016879054
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -33,7 +33,7 @@ public class MusicPlayer : MonoBehaviour {
 	/// <param name="music">再生楽曲情報</param>
 	void Setup (MusicParamObject music) {
 		musicParam = music;
-		audioEntity = audioPool.Lend ();
+		audioEntity = audioPool.Rent ();
 		audioSource = audioEntity.audioSource;
 		if (audioSource == null) {
 			Debug.LogError ("null source");

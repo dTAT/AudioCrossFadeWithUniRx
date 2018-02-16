@@ -1,66 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using UniRx.Toolkit;
 
-public class AudioPool : MonoBehaviour {
-	[SerializeField]
-	private const int PoolingNumber = 10;
-	Queue<AudioEntity> audioQueue;
+/// <summary>
+///
+/// </summary>
+public class AudioPool : MonoBehaviour
+{
+    private class Pool : ObjectPool<AudioEntity>
+    {
+        GameObject prefabOriginal;
+        Transform parentTransform;
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="parentTransform_">親のtransform</param>
+        /// <param name="prefabOriginal_">生成元prefab</param>
+        public Pool(Transform parentTransform_, GameObject prefabOriginal_)
+        {
+            parentTransform = parentTransform_;
+            prefabOriginal = prefabOriginal_;
+        }
+        /// <summary>
+        /// 新規にインスタンスを生成する
+        /// </summary>
+        /// <returns>AudioEntity</returns>
+        protected override AudioEntity CreateInstance()
+        {
+            var go = GameObject.Instantiate(prefabOriginal);
+            go.transform.SetParent(parentTransform);
+            return go.GetComponent<AudioEntity>();
+        }
+    }
 
-	AudioEntity.Factory factory;
-	public void Awake () {
-		factory = new AudioEntity.Factory ();
-		audioQueue = new Queue<AudioEntity> (PoolingNumber);
-		Initialize (PoolingNumber);
-	}
+    Pool pool = null;
+    [SerializeField]
+    AudioEntity entityPrefab;
+    public int PoolSize = 32;
+    const int CreateEachFrame = 2;
+    /// <summary>
+    /// /
+    /// </summary>
+    AudioEntity.Factory factory;
+    public void Awake()
+    {
+        pool = new Pool(this.transform, entityPrefab.gameObject);
+        pool.PreloadAsync(PoolSize, CreateEachFrame);
+    }
 
-	public AudioEntity Lend () {
-		var ae = audioQueue.Dequeue ();
-		ae.Activate (true);
-		ae.Initialize ();
-		return ae;
-	}
-	public void Return (AudioEntity entity) {
-		entity.Initialize ();
-		entity.Activate (false);
-		entity.SetParent (this.transform);
-		audioQueue.Enqueue (entity);
-	}
+    public AudioEntity Rent()
+    {
+        return pool.Rent();
+    }
+    public void Return(AudioEntity entity)
+    {
+        pool.Return(entity);
+    }
 
-	public int Count {
-		get {
-			return audioQueue.Count;
-		}
-	}
-	public void Initialize (int count) {
-		FillPool (count);
-	}
-
-	void EmptyPool () {
-		var count = audioQueue.Count;
-		for (int i = 0; i < count; ++i) {
-			var a = audioQueue.Dequeue ();
-			Destroy (a.gameObject);
-		}
-		audioQueue.Clear ();
-	}
-
-	void FillPool (int count) {
-		for (var i = 0; i < count; ++i) {
-			var entity = CreateEntity ();
-			audioQueue.Enqueue (entity);
-		}
-	}
-	AudioEntity CreateEntity () {
-		var entity = factory.Create ();
-		entity.SetParent (transform);
-		entity.Initialize ();
-		entity.Activate (false);
-		entity.onReleaseEvent.AddListener (OnEntityRelease);
-		entity.onDestroyEvent.AddListener (OnEntityRelease);
-		return entity;
-	}
-	void OnEntityRelease (AudioEntity entity) {
-		Return (entity);
-	}
+    public int Count
+    {
+        get
+        {
+            return pool.Count;
+        }
+    }
 }
