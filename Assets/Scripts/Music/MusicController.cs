@@ -20,7 +20,7 @@ public class MusicController : MonoBehaviour {
 	/// 再生開始
 	/// </summary>
 	/// <param name="MusicName">再生する楽曲のプログラム内の名前</param>
-	public void Play (string MusicName) {
+	public void Play (string MusicName, bool Immediately = false) {
 		var music = SelectMusic (MusicName);
 		if (null == music) {
 			return;
@@ -28,14 +28,14 @@ public class MusicController : MonoBehaviour {
 		var go = diContainer.InstantiatePrefab (musicPlayerPrefab);
 		go.transform.SetParent (transform);
 		var player = go.GetComponent<MusicPlayer> ();
-		player.Play (music);
+		player.Play (music, Immediately);
 		musicPlayers.Add (player);
 	}
 	/// <summary>
 	/// 全部止める
 	/// </summary>
-	public void StopAll () {
-		musicPlayers.ForEach (x => x.Stop ());
+	public void StopAll (bool Immediately = false) {
+		musicPlayers.ForEach (x => x.Stop (Immediately));
 		musicPlayers.Clear ();
 	}
 	/// <summary>
