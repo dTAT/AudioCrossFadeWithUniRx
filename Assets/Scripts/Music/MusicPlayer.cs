@@ -27,6 +27,7 @@ public class MusicPlayer : MonoBehaviour {
 	/// 音情報キャッシュ
 	/// </summary>
 	[Inject] AudioPool audioPool;
+	IDisposable attackSubscripion;
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
@@ -43,19 +44,19 @@ public class MusicPlayer : MonoBehaviour {
 	/// 再生開始
 	/// </summary>
 	/// <param name="music">再生楽曲情報</param>
-	/// <param name="Immidiate">即時再生開始するか</param>
-	public void Play (MusicParamObject music, bool Immidiate = false) {
+	/// <param name="Immediately">即時再生開始するか</param>
+	public void Play (MusicParamObject music, bool Immediately = false) {
 		Setup (music);
 		audioSource.clip = music.musicClip;
 		audioSource.outputAudioMixerGroup = music.outputMixerGroup;
 		audioSource.Play ();
-		if (Immidiate) {
+		if (Immediately) {
 			return;
 		}
 		var curve = music.attackCCurve;
 		var timespan = music.attackTime;
 		//fadein
-		ControlVolumeWithCurve (curve, timespan, () => { });
+		attackSubscripion = ControlVolumeWithCurve (curve, timespan, () => { });
 	}
 	/// <summary>
 	/// 終了前処理
@@ -70,11 +71,12 @@ public class MusicPlayer : MonoBehaviour {
 	/// <summary>
 	/// 停止処理
 	/// </summary>
-	/// <param name="Immidiate"></param>
-	public void Stop (bool Immidiate = false) {
+	/// <param name="Immediateely"></param>
+	public void Stop (bool Immediateely = false) {
+		attackSubscripion.Dispose ();
 		var timespan = musicParam.releaseTime;
 		var curve = musicParam.releaseCurve;
-		if (Immidiate) {
+		if (Immediateely) {
 			Cleanup ();
 			return;
 		}
@@ -85,9 +87,9 @@ public class MusicPlayer : MonoBehaviour {
 	/// </summary>
 	/// <param name="curve">音量調整カーブ</param>
 	/// <param name="timespan">音量調整時間</param>
-	/// <param name="onComplete">完了後処理</param>//
-	private void ControlVolumeWithCurve (AnimationCurve curve, float timespan, UnityAction onComplete) {
-		this.UpdateAsObservable ()
+	/// <param name="onComplete">完了後処理</param>
+	IDisposable ControlVolumeWithCurve (AnimationCurve curve, float timespan, UnityAction onComplete) {
+		var ret = this.UpdateAsObservable ()
 			.Select (_ => Time.deltaTime) //deltaを流して
 			.Scan ((sum, delta) => sum += delta) //deltaの合計を得て
 			.TakeWhile (x => x < timespan) //終了時刻前なら
@@ -98,5 +100,6 @@ public class MusicPlayer : MonoBehaviour {
 			}, () => { //終わったらcomplete
 				onComplete.Invoke ();
 			}).AddTo (this);
+		return ret;
 	}
 }
