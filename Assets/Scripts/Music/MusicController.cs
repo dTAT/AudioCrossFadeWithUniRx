@@ -11,6 +11,23 @@ using Zenject;
 public class MusicController : MonoBehaviour {
 	public MusicParamObject[] musicParamObjects;
 	public GameObject musicPlayerPrefab;
+
+	[SerializeField]
+	AudioMixer defaultMixer;
+	[SerializeField]
+	AudioMixerSnapshot defaultSnapshot;
+	public void ResetMixerSnapshot (AudioMixerSnapshot srcSnSnapshot, float duration) {
+		TeransitionSnapshot (srcSnSnapshot, defaultSnapshot, duration);
+	}
+	public void SetMixerSnapshot (AudioMixerSnapshot dstMixerSnapshot, float duration) {
+		TeransitionSnapshot (defaultSnapshot, dstMixerSnapshot, duration);
+	}
+	void TeransitionSnapshot (AudioMixerSnapshot src, AudioMixerSnapshot dst, float duration) {
+		AudioMixerSnapshot[] ss = { src, dst };
+		float[] w = { 0.0f, 1.0f };
+		defaultMixer.TransitionToSnapshots (ss, w, duration);
+	}
+
 	[Inject]
 	AudioPool audioPool;
 	[Inject]
@@ -21,6 +38,9 @@ public class MusicController : MonoBehaviour {
 	/// </summary>
 	/// <param name="MusicName">再生する楽曲のプログラム内の名前</param>
 	public void Play (string MusicName, bool Immediately = false) {
+		if (string.IsNullOrEmpty (MusicName)) {
+			return;
+		}
 		var music = SelectMusic (MusicName);
 		if (null == music) {
 			return;

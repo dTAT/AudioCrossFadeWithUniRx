@@ -31,6 +31,10 @@ public class MusicParamObject : ScriptableObject {
 	/// </summary>
 	public AudioMixerGroup outputMixerGroup;
 	/// <summary>
+	/// リリース時に切り替えるスナップショット
+	/// </summary>
+	public AudioMixerSnapshot releaseSnapshot;
+	/// <summary>
 	/// 再生音源
 	/// </summary>
 	public AudioClip musicClip;

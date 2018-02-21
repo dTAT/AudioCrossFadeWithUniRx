@@ -27,7 +27,9 @@ public class MusicPlayer : MonoBehaviour {
 	/// 音情報キャッシュ
 	/// </summary>
 	[Inject] AudioPool audioPool;
+	[Inject] MusicController musicController;
 	IDisposable attackSubscripion;
+	AudioMixerSnapshot dirtySnapshot = null;
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
@@ -66,6 +68,9 @@ public class MusicPlayer : MonoBehaviour {
 		if (audioEntity != null) {
 			audioPool.Return (audioEntity);
 		}
+		if (null != dirtySnapshot) {
+			musicController.ResetMixerSnapshot (dirtySnapshot, 0.04f);
+		}
 		Destroy (this.gameObject);
 	}
 	/// <summary>
@@ -81,6 +86,8 @@ public class MusicPlayer : MonoBehaviour {
 			return;
 		}
 		FadeVolume (curve, timespan, Cleanup);
+		musicController.SetMixerSnapshot (musicParam.releaseSnapshot, timespan);
+		dirtySnapshot = musicParam.releaseSnapshot;
 	}
 
 	IDisposable FadeVolume (AnimationCurve curve, float duration, UnityAction onComplete) {

@@ -55,7 +55,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  releaseTime: 3
+  releaseTime: 2
   outputMixerGroup: {fileID: 243345357673490670, guid: 716777eeac9ec46deadf402bf867657d,
+    type: 2}
+  releaseSnapshot: {fileID: 245064111618030286, guid: 716777eeac9ec46deadf402bf867657d,
     type: 2}
   musicClip: {fileID: 8300000, guid: f9c7999b2040c4bd68d96879a1809518, type: 3}

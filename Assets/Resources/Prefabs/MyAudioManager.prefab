@@ -131,6 +131,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ef707136390684997bbc5ec15d127eb1, type: 2}
   musicPlayerPrefab: {fileID: 1044009229459300, guid: cbe0adc6663fa4013b8753b6cf456df4,
     type: 2}
+  defaultMixer: {fileID: 24100000, guid: 716777eeac9ec46deadf402bf867657d, type: 2}
+  defaultSnapshot: {fileID: 24500006, guid: 716777eeac9ec46deadf402bf867657d, type: 2}
 --- !u!114 &114946903813277846
 MonoBehaviour:
   m_ObjectHideFlags: 1

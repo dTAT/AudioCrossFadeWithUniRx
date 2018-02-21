@@ -36,7 +36,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  attackTime: 1
+  attackTime: 0.01
   releaseCurve:
     serializedVersion: 2
     m_Curve:
@@ -57,5 +57,7 @@ MonoBehaviour:
     m_RotationOrder: 0
   releaseTime: 2
   outputMixerGroup: {fileID: 243345357673490670, guid: 716777eeac9ec46deadf402bf867657d,
+    type: 2}
+  releaseSnapshot: {fileID: 245910178616562060, guid: 716777eeac9ec46deadf402bf867657d,
     type: 2}
   musicClip: {fileID: 8300000, guid: 9e2d82e919d094556b96e46fca3f8e79, type: 3}

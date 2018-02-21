@@ -10,6 +10,8 @@ AudioMixerController:
   m_MasterGroup: {fileID: 24300002}
   m_Snapshots:
   - {fileID: 24500006}
+  - {fileID: 245064111618030286}
+  - {fileID: 245910178616562060}
   m_StartSnapshot: {fileID: 24500006}
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
@@ -58,10 +60,13 @@ AudioMixerSnapshotController:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Snapshot
+  m_Name: Default
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: cdf015c73fa734a30968cf9677a2af37
-  m_FloatValues: {}
+  m_FloatValues:
+    62d230f02100a44a7ad6a5d52a1a8e09: -14
+    ff7711b56156242b487a1d5ef1474c4e: 10
+    a506aadcae5be463f919b0e4fa383979: 22000
   m_TransitionOverrides: {}
 --- !u!243 &243345357673490670
 AudioMixerGroupController:
@@ -76,6 +81,8 @@ AudioMixerGroupController:
   m_Pitch: 322c84606e0314faf9e216a9cdaa6193
   m_Effects:
   - {fileID: 244639530998132140}
+  - {fileID: 244915033341643412}
+  - {fileID: 244684506278581370}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -93,3 +100,59 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!244 &244684506278581370
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_EffectID: b03c89370fc6a485f81dbe11fb81d329
+  m_EffectName: Highpass Simple
+  m_MixLevel: 19619db88ccc141e5a3a2d85ad7559ed
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: ff7711b56156242b487a1d5ef1474c4e
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!244 &244915033341643412
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_EffectID: 02fe604fc0b994567b72818f993d7c79
+  m_EffectName: Lowpass Simple
+  m_MixLevel: b2f5ea8ed98c344279f59be6ba18fcca
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: a506aadcae5be463f919b0e4fa383979
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!245 &245064111618030286
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Whiteout
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: 6d500cce6e3714e9b812e4813ac554ec
+  m_FloatValues:
+    62d230f02100a44a7ad6a5d52a1a8e09: 0
+    ff7711b56156242b487a1d5ef1474c4e: 17048
+    a506aadcae5be463f919b0e4fa383979: 22000
+  m_TransitionOverrides: {}
+--- !u!245 &245910178616562060
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Blackout
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: b0e902edde87c401fbb3eb74c54d6924
+  m_FloatValues:
+    62d230f02100a44a7ad6a5d52a1a8e09: 0
+    ff7711b56156242b487a1d5ef1474c4e: 10
+    a506aadcae5be463f919b0e4fa383979: 550
+  m_TransitionOverrides: {}
