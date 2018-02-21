@@ -27,8 +27,14 @@ public class MusicPlayer : MonoBehaviour {
 	/// 音情報キャッシュ
 	/// </summary>
 	[Inject] AudioPool audioPool;
+	/// <summary>
+	/// 楽曲再生管理クラスへの参照
+	/// </summary>
 	[Inject] MusicController musicController;
 	IDisposable attackSubscripion;
+	/// <summary>
+	/// 途中で使用したスナップショット
+	/// </summary>
 	AudioMixerSnapshot dirtySnapshot = null;
 	/// <summary>
 	/// 初期化処理
@@ -68,6 +74,7 @@ public class MusicPlayer : MonoBehaviour {
 		if (audioEntity != null) {
 			audioPool.Return (audioEntity);
 		}
+		//スナップショットを汚しているならば短い時間で戻しておく
 		if (null != dirtySnapshot) {
 			musicController.ResetMixerSnapshot (dirtySnapshot, 0.04f);
 		}
@@ -89,7 +96,13 @@ public class MusicPlayer : MonoBehaviour {
 		musicController.SetMixerSnapshot (musicParam.releaseSnapshot, timespan);
 		dirtySnapshot = musicParam.releaseSnapshot;
 	}
-
+	/// <summary>
+	/// 音量を変化する
+	/// </summary>
+	/// <param name="curve">変化カーブ</param>
+	/// <param name="duration">変化時間</param>
+	/// <param name="onComplete">変化完了時処理</param>
+	/// <returns></returns>
 	IDisposable FadeVolume (AnimationCurve curve, float duration, UnityAction onComplete) {
 		var ret = Observable
 			.FromCoroutine<float> (o => TransitionVolume (o, curve, duration))
@@ -99,7 +112,13 @@ public class MusicPlayer : MonoBehaviour {
 			}, () => onComplete.Invoke ()).AddTo (this);
 		return ret;
 	}
-
+	/// <summary>
+	/// 変化時間中のカーブ値を流すCoroutine
+	/// </summary>
+	/// <param name="observer">Coroutine処理のObserver</param>
+	/// <param name="curve">変化カーブ</param>
+	/// <param name="duration">変化時間</param>
+	/// <returns>処理Coroutine</returns>
 	IEnumerator TransitionVolume (IObserver<float> observer, AnimationCurve curve, float duration) {
 		var timer = duration;
 		while (timer > 0) {

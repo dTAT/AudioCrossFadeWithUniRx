@@ -11,17 +11,37 @@ using Zenject;
 public class MusicController : MonoBehaviour {
 	public MusicParamObject[] musicParamObjects;
 	public GameObject musicPlayerPrefab;
-
+	/// <summary>
+	/// デフォルトのミキサーとそのスナップショット
+	/// Set関数でスナップショットを変化させることを許容し、
+	/// Reset関数で戻すことを要求する
+	/// </summary>
 	[SerializeField]
 	AudioMixer defaultMixer;
 	[SerializeField]
 	AudioMixerSnapshot defaultSnapshot;
+	/// <summary>
+	/// スナップショットをデフォルトに戻す
+	/// </summary>
+	/// <param name="srcSnSnapshot">現スナップショット</param>
+	/// <param name="duration">切り替え時間</param>
 	public void ResetMixerSnapshot (AudioMixerSnapshot srcSnSnapshot, float duration) {
 		TeransitionSnapshot (srcSnSnapshot, defaultSnapshot, duration);
 	}
+	/// <summary>
+	/// スナップショットをデフォルトから切り替える
+	/// </summary>
+	/// <param name="dstMixerSnapshot">切り替え先スナップショット</param>
+	/// <param name="duration">切り替え時間</param>
 	public void SetMixerSnapshot (AudioMixerSnapshot dstMixerSnapshot, float duration) {
 		TeransitionSnapshot (defaultSnapshot, dstMixerSnapshot, duration);
 	}
+	/// <summary>
+	/// スナップショットを切り替える
+	/// </summary>
+	/// <param name="src">切り替え元スナップショット</param>
+	/// <param name="dst">切り替え先スナップショット</param>
+	/// <param name="duration">切り替え時間</param>
 	void TeransitionSnapshot (AudioMixerSnapshot src, AudioMixerSnapshot dst, float duration) {
 		AudioMixerSnapshot[] ss = { src, dst };
 		float[] w = { 0.0f, 1.0f };
