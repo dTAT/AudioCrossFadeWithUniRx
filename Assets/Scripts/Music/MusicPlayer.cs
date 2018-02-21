@@ -56,7 +56,7 @@ public class MusicPlayer : MonoBehaviour {
 		var curve = music.attackCCurve;
 		var timespan = music.attackTime;
 		//fadein
-		attackSubscripion = ControlVolumeWithCurve (curve, timespan, () => { });
+		attackSubscripion = FadeVolume (curve, timespan, () => { });
 	}
 	/// <summary>
 	/// 終了前処理
@@ -80,26 +80,27 @@ public class MusicPlayer : MonoBehaviour {
 			Cleanup ();
 			return;
 		}
-		ControlVolumeWithCurve (curve, timespan, Cleanup);
+		FadeVolume (curve, timespan, Cleanup);
 	}
-	/// <summary>
-	///　指定カーブと時間に合わせて音量を調整する
-	/// </summary>
-	/// <param name="curve">音量調整カーブ</param>
-	/// <param name="timespan">音量調整時間</param>
-	/// <param name="onComplete">完了後処理</param>
-	IDisposable ControlVolumeWithCurve (AnimationCurve curve, float timespan, UnityAction onComplete) {
-		var ret = this.UpdateAsObservable ()
-			.Select (_ => Time.deltaTime) //deltaを流して
-			.Scan ((sum, delta) => sum += delta) //deltaの合計を得て
-			.TakeWhile (x => x < timespan) //終了時刻前なら
-			.Select (x => x / timespan) //開始から終了までの比率を計算して流して
-			.Subscribe ((x) => {
-				var ratio = curve.Evaluate (x);
-				audioSource.volume = ratio;
-			}, () => { //終わったらcomplete
-				onComplete.Invoke ();
-			}).AddTo (this);
+
+	IDisposable FadeVolume (AnimationCurve curve, float duration, UnityAction onComplete) {
+		var ret = Observable
+			.FromCoroutine<float> (o => TransitionVolume (o, curve, duration))
+			//TransitionVolumeのOnNextごとに呼ばれる
+			.Subscribe (v => {
+				audioSource.volume = v;
+			}, () => onComplete.Invoke ()).AddTo (this);
 		return ret;
+	}
+
+	IEnumerator TransitionVolume (IObserver<float> observer, AnimationCurve curve, float duration) {
+		var timer = duration;
+		while (timer > 0) {
+			timer -= Time.deltaTime;
+			var v = curve.Evaluate (1 - Mathf.Clamp01 (timer / duration));
+			observer.OnNext (v);
+			yield return null;
+		}
+		observer.OnCompleted ();
 	}
 }
