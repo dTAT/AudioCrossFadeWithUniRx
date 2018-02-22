@@ -32,10 +32,7 @@ public class MusicPlayer : MonoBehaviour {
 	/// </summary>
 	[Inject] MusicController musicController;
 	IDisposable attackSubscripion;
-	/// <summary>
-	/// 途中で使用したスナップショット
-	/// </summary>
-	AudioMixerSnapshot dirtySnapshot = null;
+
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
@@ -74,10 +71,6 @@ public class MusicPlayer : MonoBehaviour {
 		if (audioEntity != null) {
 			audioPool.Return (audioEntity);
 		}
-		//スナップショットを汚しているならば短い時間で戻しておく
-		if (null != dirtySnapshot) {
-			musicController.ResetMixerSnapshot (dirtySnapshot, 0.04f);
-		}
 		Destroy (this.gameObject);
 	}
 	/// <summary>
@@ -93,8 +86,6 @@ public class MusicPlayer : MonoBehaviour {
 			return;
 		}
 		FadeVolume (curve, timespan, Cleanup);
-		musicController.SetMixerSnapshot (musicParam.releaseSnapshot, timespan);
-		dirtySnapshot = musicParam.releaseSnapshot;
 	}
 	/// <summary>
 	/// 音量を変化する

@@ -6,6 +6,8 @@ using Zenject;
 public class IllustController : MonoBehaviour {
 	[Inject]
 	TransitionScreen transitionScreen;
+	[Inject]
+	MusicController musicController;
 	SceneComponent[] scenes = null;
 	SceneComponent lastScene = null;
 	private void Awake () {
@@ -47,10 +49,15 @@ public class IllustController : MonoBehaviour {
 				closed = true;
 			};
 			transitionScreen.OnTransitionComplete.AddListener (wait);
+			//シーンの終了処理を行う
 			sceneExit.ExitScne ();
+			//画面をフェードアウトさせる
 			transitionScreen.Close (sceneExit.FadeoutColor, sceneExit.FadeoutDuration);
+			//フェード完了までまつ
 			while (!closed) yield return null;
 			transitionScreen.OnTransitionComplete.RemoveListener (wait);
+			//フェード完了後処理をする
+			sceneExit.OnCompleteExit ();
 			sceneExit.gameObject.SetActive (false);
 		}
 		if (sceneEnter != null) {
@@ -60,8 +67,11 @@ public class IllustController : MonoBehaviour {
 			};
 			sceneEnter.gameObject.SetActive (true);
 			transitionScreen.OnTransitionComplete.AddListener (wait);
+			//シーンの開始処理をする
 			sceneEnter.EntertScene ();
+			//画面をフェードインさせる
 			transitionScreen.Open (sceneEnter.FadeinColor, sceneEnter.FadeinDuration);
+			//フェードインをまつ
 			while (closed) yield return null;
 			transitionScreen.OnTransitionComplete.RemoveListener (wait);
 		}
